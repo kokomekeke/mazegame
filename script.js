@@ -828,14 +828,14 @@ Game.prototype.drawMazeRecursive = function (Game, level) {
     let matrix1 = matrix(size, 0);
     let matrix2, matrix3;
 
-    placeWall(matrix1, false, 0, matrix1.length, count);
-
+    //placeWall2(matrix1, false, 0, matrix1.length, 0, matrix1[0].length, count);
+    addInnerWalls(matrix1, true,  0, matrix1.length, 0, matrix1[0].length);
 
     this.map = matrix1;
 }
 
-function placeWall (matrix, isVertical, start, end, count) {
-
+function placeWall (isVertical, start, end, count) {
+    console.log("vert......" + isVertical);
     let newMatrix = matrix;
 
     sizeM = {
@@ -855,7 +855,6 @@ function placeWall (matrix, isVertical, start, end, count) {
 
     } else rand = Math.floor(Math.random() * matrix[0].length);
 
-    
     
     while (rand % 2 !== 0) {
 
@@ -883,6 +882,7 @@ function placeWall (matrix, isVertical, start, end, count) {
             }
         }
     }
+    
 
     let rand2;
 
@@ -918,10 +918,244 @@ function placeWall (matrix, isVertical, start, end, count) {
         }
     }
     count ++;
-    if (count == 500) {
+    if (count == 100) {
         return;
     }
+    //placeWall(newMatrix, !this.isVertical, 0, (size-1-rand), count);
     placeWall(newMatrix, !this.isVertical, 0, (size-(size-rand)), count);
+    
+}
+
+
+function placeWall2(matrix, isVertical, startY, endY, startX, endX, count) {
+    console.log("\n\n\nmatrix " + matrix);
+    console.log("count " + count);
+    console.log("veritcal " + isVertical);
+    console.log("startY " + startY);
+    console.log("endY " + endY);
+    console.log("startX " + startX);
+    console.log("endX " + endX);
+    //console.log("\n");  
+    //let matrix1 = matrix;
+
+    if (endX - startX < 2 || endY - startY < 2) {
+        return;
+    }
+
+
+    let rand;
+
+    if (isVertical) {
+
+        rand = randomNumber(startX, endX);
+
+    } else rand = randomNumber(startY, endY);
+    
+    while (rand % 2 !== 0) {
+
+        if (isVertical) {
+
+            rand = randomNumber(startX, endX);
+        
+        } else rand = randomNumber(startY, endY);
+
+    }
+    console.log("rand " + rand);
+    
+
+    //i = y, j = x
+    for (let i = startY; i < endY; i ++) {
+        for (let j = startX; j < endX; j ++) {
+            if (isVertical) {
+                if (j == rand) {
+                    matrix[i][j] = 1;
+                } 
+            } else {
+                if (i == rand) {
+                    //map[i][j] = 1;
+                    matrix[i][j] = 1;
+                } 
+            }
+        }
+    }
+    
+
+    let rand2;
+
+    if (isVertical) {
+
+        rand2  = randomNumber(startX, endX);
+
+    } else rand2 = randomNumber(startY, endY);
+
+    while (rand2 % 2 == 0) {
+
+        if (isVertical) {
+
+            rand2  = randomNumber(startX, endX);
+        
+        } else rand2 = randomNumber(startY, endY);
+
+    }
+    console.log("rand2 " + rand2);
+
+
+    for (let i = startY; i < endY; i ++) {
+        for (let j = startX; j < endX; j ++) {
+            if (isVertical) {
+                if (j == rand && i == rand2) {
+                    matrix[i][j] = 0;
+                }
+            } else {
+                if (i == rand && j == rand2) {
+                    //this.map[i][j] = 0;
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+    /*
+    if (isVertical) {
+
+        rand = Math.floor(Math.random() * endX);
+        while (rand % 2 !== 0) {
+            rand = Math.floor(Math.random() * endY);
+        }
+
+    } else {
+
+        rand = Math.floor(Math.random() * endY);
+        while (rand % 2 !== 0) {
+            rand = Math.floor(Math.random() * endX);
+        }
+    }*/
+
+
+    count ++;
+    if (count == 50) {
+        console.log("return");
+        return;
+    }
+    
+
+    //ezzel vmit lehet kezdeni: retrunol matrixokat, es azoknak a matrixoknak a koordinatait helyettesiti be a map ba
+    if (isVertical) {
+        if(rand !== startX)
+        placeWall2(matrix, !isVertical, startY, endY, startX, rand-1 , count);
+        if(rand !== endX - 1)
+        placeWall2(matrix, !isVertical, startY, endY, rand + 1, endX, count);
+    } else {
+        if(rand !== startY)
+        placeWall2(matrix, !isVertical, startY, rand-1, startX, endX, count);
+        if(rand !== endY - 1)
+        placeWall2(matrix, !isVertical, rand + 1, endY, startX, endX, count);
+    } 
+    
+
+      
+    /*
+    console.log(count);
+    if (isVertical) {
+        if (rand !== 0)placeWall2(matrix1, !isVertical, startY, endY, startX, rand, count);
+        if (rand !== endX)placeWall2(matrix1, !isVertical, startY, endY, rand + 1, endX, count);
+    } else {
+        if (rand !== 0)placeWall2(matrix1, !isVertical, startY, rand, startX, endX, count);
+        if (rand !== endY)placeWall2(matrix1, !isVertical, startY, rand + 1, startX, endX, count);
+    }*/
+
+    //isVertical = !isVertical;
+    
+    //placeWall2(newMatrix, isVertical, 0, size, count);
+    //placeWall2(newMatrix, !this.isVertical, (sizeM.y-(sizeM.y-rand)), 0, count);
+
+    
+    
+    //placeWall2(newMatrix, isVertical, startY, endY, startX, endX, count);
+   
+    
+}
+//
+//
+//
+function addInnerWalls(matrix, h, minX, maxX, minY, maxY) {
+    console.log("\n"+matrix);
+    console.log(h);
+    console.log(minY);
+    console.log(maxY);
+    console.log(minX);
+    console.log(maxX);
+    if (h) {
+
+        if (maxX - minX < 2) {
+            return;
+        }
+
+        var y = Math.floor(randomNumber(minY, maxY-1)/2)*2;
+        console.log(y);
+    
+        var hole = Math.floor(randomNumber(minX, maxX-1)/2)*2+1;
+        while (hole >= maxX) {
+            hole = Math.floor(randomNumber(minX, maxX-1)/2)*2+1;
+        }
+
+        console.log(hole);
+        for (var i = minX; i < maxX; i++) {
+            if (i == hole) matrix[y][i] = 0;
+            else matrix[y][i] = 1;
+        }
+
+        if(y !== minX)
+        addInnerWalls(matrix, !h, minX, maxX, minY, y);
+        if(y + 1 !== maxY)
+        addInnerWalls(matrix, !h, minX, maxX, y + 1, maxY);
+    } else {
+        if (maxY - minY < 2) {
+            return;
+        }
+
+        var x = Math.floor(randomNumber(minX, maxX-1)/2)*2;
+        console.log(x);
+    
+        var hole = Math.floor(randomNumber(minY, maxY-1)/2)*2+1;
+        while (hole >= maxY) {
+            hole = Math.floor(randomNumber(minY, maxY-1)/2)*2+1;
+        }
+
+        console.log(hole);
+        for (var i = minY; i < maxY; i++) {
+            if (i == hole) matrix[i][x] = 0;
+            else matrix[i][x] = 1;
+        }
+
+        if(x !== minX)
+        addInnerWalls(matrix, !h, minX, x, minY, maxY);
+        if(x+1 !== maxX)
+        addInnerWalls(matrix, !h, x + 1, maxX, minY, maxY);
+    }
+}
+
+function addHWall(matrix, minX, maxX, y) {
+    var hole = Math.floor(randomNumber(minX, maxX)/2)*2+1;
+
+    for (var i = minX; i <= maxX; i++) {
+        if (i == hole) matrix[y][i] = 0;
+        else matrix[y][i] = 1;
+    }
+}
+
+function addVWall(matrix, minY, maxY, x) {
+    var hole = Math.floor(randomNumber(minY, maxY)/2)*2+1;
+
+    for (var i = minY; i <= maxY; i++) {
+        if (i == hole) matrix[i][x] = 0;
+        else matrix[i][x] = 1;
+    }
+}
+//
+//
+//
+function randomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function deleteElement (object, value1, value2) {
@@ -1336,6 +1570,7 @@ function commandListener() {
                 size = 5;
                 console.log(5);
                 document.getElementById("button5").disabled = true;
+                document.getElementById("button5").style.background = "rgb(44, 50, 127)";
             } 
 
         } else 
@@ -1346,6 +1581,7 @@ function commandListener() {
                 size = 7;
                 console.log(7);
                 document.getElementById("button6").disabled = true;
+                document.getElementById("button6").style.background = "rgb(44, 50, 127)";
             }  
 
         } else 
@@ -1356,6 +1592,7 @@ function commandListener() {
                 size = 9;
                 console.log(9);
                 document.getElementById("button7").disabled = true;
+                document.getElementById("button7").style.background = "rgb(44, 50, 127)";
             }   
 
         } else 
